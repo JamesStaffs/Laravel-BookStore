@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
@@ -14,6 +15,7 @@ class BookController extends Controller
             'books' => $books
         ]);
     }
+
 
     // READING
     public function show(Request $request)
