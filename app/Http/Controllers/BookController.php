@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Models\Author;
 use App\Http\Resources\BookResource;
 
 class BookController extends Controller
@@ -29,7 +30,9 @@ class BookController extends Controller
     // Show us a form to enter the details of a Book
     public function create(Request $request)
     {
-        return view('books.create');
+        return view('books.create', [
+            'authors' => Author::all()
+        ]);
     }
 
     // The saving of the form that was shown in "create"
@@ -40,7 +43,7 @@ class BookController extends Controller
 
         $validated = $request->validate([
             'title' => ['required', 'min:1', 'max:60'],
-            'author' => ['required'],
+            'author_id' => ['required', 'exists:authors,id'],
             'isbn' => [
                 'required',
                 'numeric',
@@ -59,7 +62,7 @@ class BookController extends Controller
         $book = new Book();
         $book->title = $validated['title'];
         $book->isbn = $validated['isbn'];
-        $book->author = $validated['author'];
+        $book->author_id = $validated['author_id'];
         $book->save();
 
         return redirect()->route('books.show', [
@@ -72,7 +75,8 @@ class BookController extends Controller
     {
         $book = Book::findOrFail($request->id);
         return view('books.edit', [
-            'book' => $book
+            'book' => $book,
+            'authors' => Author::all()
         ]);
     }
 
@@ -84,7 +88,7 @@ class BookController extends Controller
 
         $validated = $request->validate([
             'title' => ['required', 'min:1', 'max:60'],
-            'author' => ['required'],
+            'author_id' => ['required', 'exists:authors,id'],
             'isbn' => [
                 'required',
                 'numeric',
@@ -103,7 +107,7 @@ class BookController extends Controller
         $book = Book::findOrFail($request->id);
         $book->title = $validated['title'];
         $book->isbn = $validated['isbn'];
-        $book->author = $validated['author'];
+        $book->author_id = $validated['author_id'];
         $book->save();
 
         return redirect()->route('books.show', [

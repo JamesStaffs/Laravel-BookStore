@@ -23,8 +23,13 @@
     </p>
 
     <p>
-        <label for="author">Author</label>
-        <input type="text" name="author" value="{{ old('author', $book->author) }}">
+        <label for="author_id">Author</label>
+        <select name="author_id">
+            <option value="">Select an author</option>
+            @foreach($authors as $author)
+                <option value="{{ $author->id }}" {{ old('author_id', $book->author_id) == $author->id ? 'selected' : '' }}>{{ $author->name }}</option>
+            @endforeach
+        </select>
     </p>
 
     <p>

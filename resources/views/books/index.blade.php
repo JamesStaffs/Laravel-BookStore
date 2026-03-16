@@ -8,7 +8,7 @@
         @foreach($books as $book)
             <li>
                 <a href="{{ route('books.show', $book) }}">
-                    {{ $book->title }}
+                    {{ $book->title }} by {{ $book->author->name }}
                 </a>
             </li>
         @endforeach

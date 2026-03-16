@@ -11,5 +11,5 @@
     </li>
 </ul>
 
-<h3>Authored by {!! $book->author !!}</h3>
+<h3>Authored by {!! $book->author->name !!}</h3>
 <p>ISBN: {!! $book->isbn !!}</p>
