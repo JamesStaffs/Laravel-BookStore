@@ -1,14 +1,22 @@
 <h2>{{ $author->name }}</h2>
 
 <ul>
-    <li><a href="{{ route('authors.edit', $author) }}">Edit</a></li>
-    <li>
-        <form method="POST" action="{{ route('authors.destroy', $author) }}">
-            @csrf
-            @method('DELETE')
-            <input type="submit" value="Delete" />
-        </form>
-    </li>
+    @can('update', $author)
+        <li><a href="{{ route('authors.edit', $author) }}">Edit</a></li>
+    @else
+        <li>Please login to edit</li>
+    @endcan
+    @can('delete', $author)
+        <li>
+            <form method="POST" action="{{ route('authors.destroy', $author) }}">
+                @csrf
+                @method('DELETE')
+                <input type="submit" value="Delete" />
+            </form>
+        </li>
+    @else
+        <li>Please login to delete</li>
+    @endcan
 </ul>
 
 @if($author->bio)

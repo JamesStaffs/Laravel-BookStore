@@ -30,8 +30,9 @@ class BookController extends Controller
     // Show us a form to enter the details of a Book
     public function create(Request $request)
     {
+        $authors = Author::all();
         return view('books.create', [
-            'authors' => Author::all()
+            'authors' => $authors
         ]);
     }
 
@@ -74,9 +75,10 @@ class BookController extends Controller
     public function edit(Request $request)
     {
         $book = Book::findOrFail($request->id);
+        $authors = Author::all();
         return view('books.edit', [
             'book' => $book,
-            'authors' => Author::all()
+            'authors' => $authors
         ]);
     }
 

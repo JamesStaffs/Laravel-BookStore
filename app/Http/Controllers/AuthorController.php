@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Author;
+use Illuminate\Support\Facades\Gate;
 
 class AuthorController extends Controller
 {
@@ -12,6 +13,7 @@ class AuthorController extends Controller
      */
     public function index()
     {
+        Gate::authorize('viewAny', Author::class);
         $authors = Author::all();
         return view('authors.index', [
             'authors' => $authors
@@ -23,6 +25,7 @@ class AuthorController extends Controller
      */
     public function create()
     {
+        Gate::authorize('create', Author::class);
         return view('authors.create');
     }
 
@@ -31,6 +34,7 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Author::class);
         $validated = $request->validate([
             'name' => ['required', 'min:1', 'max:100'],
             'bio' => ['nullable', 'string', 'max:1000']
@@ -51,6 +55,7 @@ class AuthorController extends Controller
      */
     public function show(Author $author)
     {
+        Gate::authorize('view', $author);
         return view('authors.show', [
             'author' => $author
         ]);
@@ -61,6 +66,7 @@ class AuthorController extends Controller
      */
     public function edit(Author $author)
     {
+        Gate::authorize('update', $author);
         return view('authors.edit', [
             'author' => $author
         ]);
@@ -71,6 +77,7 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
+        Gate::authorize('update', $author);
         $validated = $request->validate([
             'name' => ['required', 'min:1', 'max:100'],
             'bio' => ['nullable', 'string', 'max:1000']
@@ -90,6 +97,7 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
+        Gate::authorize('delete', $author);
         $author->delete();
         return redirect()->route('authors.index');
     }

@@ -26,7 +26,9 @@
         <select name="author_id">
             <option value="">Select an author</option>
             @foreach($authors as $author)
-                <option value="{{ $author->id }}" {{ old('author_id') == $author->id ? 'selected' : '' }}>{{ $author->name }}</option>
+                <option value="{{ $author->id }}" {{ old('author_id') == $author->id ? 'selected' : '' }}>
+                    {{ $author->name }}
+                </option>
             @endforeach
         </select>
     </p>
