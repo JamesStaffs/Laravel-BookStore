@@ -34,6 +34,18 @@
         </select>
     </p>
 
+    <h3>Genres</h3>
+    @foreach($allGenres as $genre)
+        <p>
+            <label>
+                <input type="checkbox" name="genres[]" value="{{ $genre->id }}"
+                    @checked($selectedGenres->contains($genre->id))
+                >
+                {{ $genre->name }}
+            </label>
+        </p>
+    @endforeach
+
     <p>
         <input type="submit" value="Update">
     </p>

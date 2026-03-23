@@ -25,6 +25,9 @@ Route::get('/books', [BookController::class, 'index'])->name('books.index');
 Route::get('/books/api-test', function() {
     return view('books.api-test');
 });
+Route::get('/genres-test', function() {
+    return \App\Models\Genre::all();
+});
 Route::get('/books/{id}', [BookController::class, 'show'])->whereNumber('id')->name('books.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {

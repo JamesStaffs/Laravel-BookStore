@@ -3,17 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Book;
 use App\Models\Author;
+use App\Models\Book;
+use App\Models\Genre;
 use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
     // READING
-    public function index() {
-        $books = Book::all();
+    public function index(Request $request) {
+        $selectedGenreId = $request->query('genre');
+        $books = Book::with('author')
+            ->when($selectedGenreId, function($query) use ($selectedGenreId) {
+                $query->whereRelation('genres', 'id', $selectedGenreId);
+            })->orderByRaw('LOWER(title) ASC')
+            ->get();
+            
+        $genres = Genre::whereHas('books')
+            ->orderBy('name')
+            ->get();
+
         return view('books.index', [
-            'books' => $books
+            'books' => $books,
+            'genres' => $genres,
+            'selectedGenreId' => $selectedGenreId
         ]);
     }
 
@@ -74,11 +87,15 @@ class BookController extends Controller
     // Show us a form to edit the details of a Book
     public function edit(Request $request)
     {
-        $book = Book::findOrFail($request->id);
+        $book = Book::with('genres')->findOrFail($request->id);
         $authors = Author::all();
+        $allGenres = Genre::all();
+        $selectedGenres = collect(old('genres', $book->genres->pluck('id')));
         return view('books.edit', [
             'book' => $book,
-            'authors' => $authors
+            'authors' => $authors,
+            'allGenres' => $allGenres,
+            'selectedGenres' => $selectedGenres
         ]);
     }
 
@@ -91,6 +108,8 @@ class BookController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'min:1', 'max:60'],
             'author_id' => ['required', 'exists:authors,id'],
+            'genres' => ['array'],
+            'genres.*' => ['exists:genres,id'],
             'isbn' => [
                 'required',
                 'numeric',
@@ -110,6 +129,9 @@ class BookController extends Controller
         $book->title = $validated['title'];
         $book->isbn = $validated['isbn'];
         $book->author_id = $validated['author_id'];
+
+        $book->genres()->sync($validated['genres'] ?? []);
+        
         $book->save();
 
         return redirect()->route('books.show', [
