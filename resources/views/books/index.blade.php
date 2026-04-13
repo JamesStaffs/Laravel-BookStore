@@ -3,15 +3,24 @@
     <a href="{{ route('books.create') }}">Add a book</a>
 </p>
 
-<h3>Genre</h3>
-<p>Choose a genre to filter the books:</p>
-
+<h3>Filters</h3>
 <form method="GET" action="{{ route('books.index') }}">
-    <select name="genre">
+    <label for="genre">Genre:</label>
+    <select name="genre" id="genre">
         <option value="">All Genres</option>
         @foreach($genres as $genre)
             <option value="{{ $genre->id }}" @selected($selectedGenreId == $genre->id)>
                 {{ $genre->name }}
+            </option>
+        @endforeach
+    </select>
+
+    <label for="author">Author:</label>
+    <select name="author" id="author">
+        <option value="">All Authors</option>
+        @foreach($authors as $author)
+            <option value="{{ $author->id }}" @selected($selectedAuthorId == $author->id)>
+                {{ $author->name }}
             </option>
         @endforeach
     </select>

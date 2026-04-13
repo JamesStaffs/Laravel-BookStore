@@ -13,20 +13,31 @@ class BookController extends Controller
     // READING
     public function index(Request $request) {
         $selectedGenreId = $request->query('genre');
+        $selectedAuthorId = $request->query('author');
         $books = Book::with('author')
             ->when($selectedGenreId, function($query) use ($selectedGenreId) {
                 $query->whereRelation('genres', 'id', $selectedGenreId);
-            })->orderByRaw('LOWER(title) ASC')
+            })
+            ->when($selectedAuthorId, function($query) use ($selectedAuthorId) {
+                $query->where('author_id', $selectedAuthorId);
+            })
+            ->orderByRaw('LOWER(title) ASC')
             ->get();
             
         $genres = Genre::whereHas('books')
             ->orderBy('name')
             ->get();
 
+        $authors = Author::whereHas('books')
+            ->orderBy('name')
+            ->get();
+
         return view('books.index', [
             'books' => $books,
             'genres' => $genres,
-            'selectedGenreId' => $selectedGenreId
+            'authors' => $authors,
+            'selectedGenreId' => $selectedGenreId,
+            'selectedAuthorId' => $selectedAuthorId
         ]);
     }
 
